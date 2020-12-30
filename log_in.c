@@ -70,10 +70,17 @@ void clear_link ()                              //清空链表
     struct people *p, *pre = NULL;
     for (p = first; p != NULL; pre = p, p = p -> next)
         ;
-    for ( ; first != NULL; )
+    for (struct people *p ; first != NULL; )
     {
-        find_last_node(pre) -> next = NULL;
+    	if ((p = find_last_node(pre)) == NULL)
+		{
+			free(pre);
+			first = NULL;
+			break;	
+		}		 
+        p -> next = NULL;
         free(pre);
+        pre = p;
     }
 }
 
@@ -146,7 +153,7 @@ void Register ()        //注册
     free(new_account);
     printf("Press any key to return");
     getch();
-    system("cls");
+    
                                     //记得写返回菜单
 }
 
@@ -181,18 +188,18 @@ void log_in ()
                                    //记得加进入游戏的函数
 }
 
-void compire_grade ()          //更改账户中的最大分数
+void compire_grade ()                //更改账户中的最大分数
 {
     if (score > the_account -> score)
         the_account -> score = score;
 }
 
-void Delete (char *s)
+void Delete (char *s)                   //删除链表的节点
 {
     struct people *cur;
     struct people *pre;
     for (cur = first, pre = NULL; cur != NULL; pre = cur, cur = cur -> next)
-        if (cur -> account == s)
+        if (!strcmp(s, cur -> account))
             break;
     if (pre == NULL)
         first = first -> next;
@@ -212,12 +219,12 @@ void print_grade ()                           //游戏结束打印成绩表
         for (p = first, max = p; p != NULL; p = p -> next)
             if (p -> score > max -> score)
                 max = p;
-        printf("\t\t%s        %d\t\t\n", max -> name, max -> score);
+        printf("\t\t*      %s        %5d       *\t\t\n", max -> name, max -> score);
         Delete(max -> account);
     }
 }
 
-void save ()
+void save (void)
 {
     FILE *fp;
 
@@ -234,3 +241,46 @@ void save ()
         fprintf(fp, " %s %s %s %d", p -> account, p -> code, p -> name, p -> score);    
     fclose(fp);
 }
+
+void modify_code ()                         //修改密码
+{
+    char account[NUM_LEN];
+    clear_link();
+    create_a_link();
+    for (;;)
+    {
+        printf("Enter the account you want to modify: ");
+        readline(account, NUM_LEN);
+        if (search(account))
+        {
+            printf("Please enter your new code: ");
+            readline(the_account -> code, NUM_LEN);
+            save();
+            return;
+        }
+        else
+            printf("Can't find your account, please enter again\n");
+    }
+}
+
+void delete_account ()                   //删除账号
+{
+    char account[NUM_LEN];
+    clear_link();
+    create_a_link();
+    for (;;)
+    {
+        printf("Enter the account you want to delete: ");
+        readline(account, NUM_LEN);
+        if (search(account))
+        {
+            Delete(account);
+            save();
+            return;
+        }
+        else
+            printf("Can't find your account, please enter again\n");
+    }
+}
+
+

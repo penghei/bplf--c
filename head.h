@@ -2,9 +2,9 @@
 # define HEAD_H
 
 # include <stdbool.h>
+//ËùÓÐº¯Êý 
 
-
-void gamebegin();
+void gamebegin(int);
 void gameinit();
 void print(); 
 void newnum();
@@ -28,6 +28,8 @@ struct people  *find_last_node (struct people *p);
 void clear_link ()  ;
 void Delete (char *s);
 void save ();
+void modify_code ()   ;
+void delete_account ()  ;
  
 extern int score;
 
